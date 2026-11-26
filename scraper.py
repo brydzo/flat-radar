@@ -3,12 +3,17 @@ from datetime import datetime
 from curl_cffi import requests
 
 URLS = [
-    ("Os. Tysiąclecia", "Katowice", "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/slaskie/katowice/katowice/katowice/osiedle-tysiaclecia?priceMax=500000&areaMin=40&by=LATEST&direction=DESC"),
-    ("Os. Witosa", "Katowice", "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/slaskie/katowice/katowice/katowice/osiedle-witosa?priceMax=500000&areaMin=40&by=LATEST&direction=DESC"),
-    ("Wełnowiec", "Katowice", "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/slaskie/katowice/katowice/katowice/welnowiec-jozefowiec?priceMax=500000&areaMin=40&by=LATEST&direction=DESC"),
-    ("Os. Paderewskiego", "Katowice", "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/slaskie/katowice/katowice/katowice/osiedle-paderewskiego--muchowiec?priceMax=500000&areaMin=40&by=LATEST&direction=DESC"),
-    ("Klimzowiec", "Chorzów", "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/slaskie/chorzow/chorzow/chorzow/centrum/klimzowiec?priceMax=500000&areaMin=40&by=LATEST&direction=DESC"),
+    ("Os. Tysiąclecia", "Katowice", "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/slaskie/katowice/katowice/katowice/osiedle-tysiaclecia?limit=72&priceMax=500000&areaMin=40&by=LATEST&direction=DESC"),
+    ("Os. Witosa", "Katowice", "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/slaskie/katowice/katowice/katowice/osiedle-witosa?limit=72&priceMax=500000&areaMin=40&by=LATEST&direction=DESC"),
+    ("Wełnowiec", "Katowice", "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/slaskie/katowice/katowice/katowice/welnowiec--jozefowiec?limit=72&priceMax=500000&areaMin=40&by=LATEST&direction=DESC"),
+    ("Os. Paderewskiego", "Katowice", "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/slaskie/katowice/katowice/katowice/osiedle-paderewskiego--muchowiec?limit=72&priceMax=500000&areaMin=40&by=LATEST&direction=DESC"),
+    ("Klimzowiec", "Chorzów", "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie/slaskie/chorzow/chorzow/chorzow/centrum/klimzowiec?limit=72&priceMax=500000&areaMin=40&by=LATEST&direction=DESC"),
 ]
+
+ROOMS_MAP = {
+    "ONE": 1, "TWO": 2, "THREE": 3, "FOUR": 4, "FIVE": 5, "SIX": 6,
+    "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6
+}
 
 results = []
 seen = set()
@@ -35,8 +40,10 @@ for district, city, url in URLS:
                 continue
             seen.add(slug)
             imgs = it.get("images") or []
-            thumb = imgs[0].get("medium") or imgs[0].get("large") if imgs else ""
+            thumb = (imgs[0].get("medium") or imgs[0].get("large")) if imgs else ""
             street = ((it.get("location") or {}).get("address") or {}).get("street") or {}
+            raw_rooms = str(it.get("roomsNumber") or "2").upper()
+            rooms = ROOMS_MAP.get(raw_rooms, 2)
             results.append({
                 "id": str(it.get("id", slug)),
                 "district": district,
@@ -44,7 +51,7 @@ for district, city, url in URLS:
                 "street": street.get("name", ""),
                 "price": int(price),
                 "area": float(area),
-                "rooms": int(it.get("roomsNumber") or 2),
+                "rooms": rooms,
                 "adminFee": int(((it.get("rent") or {}).get("value")) or 0),
                 "condition": "Do zamieszkania",
                 "firstListed": (it.get("dateCreatedFirst") or it.get("dateCreated") or datetime.utcnow().strftime("%Y-%m-%d"))[:10],
