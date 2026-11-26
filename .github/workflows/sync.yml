@@ -1,25 +1,23 @@
-name: Sync Apartment Listings
+name: Sync Otodom Listings
 on:
   schedule:
-    - cron: '0 */2 * * *' # Runs every 2 hours automatically
+    - cron: '0 */2 * * *'
   workflow_dispatch:
-
 permissions:
   contents: write
-
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install playwright && playwright install chromium
-      - run: python scraper.py
+      - run: pip install curl_cffi
+      - run: python -u scraper.py
       - run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add listings.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update listings"
-          git push
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update listings" && git push)
