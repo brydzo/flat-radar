@@ -39,8 +39,29 @@ for district, city, url in URLS:
             if not price or not area or price > 500000 or area < 40:
                 continue
             seen.add(slug)
+
             imgs = it.get("images") or []
-            thumb = (imgs[0].get("medium") or imgs[0].get("large")) if imgs else ""
+            thumb = ""
+            if imgs:
+                first = imgs[0]
+                if isinstance(first, str):
+                    thumb = first
+                elif isinstance(first, dict):
+                    thumb = (
+                        first.get("medium")
+                        or first.get("large")
+                        or first.get("thumbnail")
+                        or first.get("url")
+                        or first.get("src")
+                        or next((v for v in first.values() if isinstance(v, str) and v.startswith("http")), "")
+                    )
+            if not thumb:
+                m_img = re.search(r'https://ireland\.apollo\.olxcdn\.com/v1/files/[^"\'\\]+', json.dumps(it))
+                if m_img:
+                    thumb = m_img.group(0)
+                    if "/image" not in thumb:
+                        thumb += "/image;s=640x480"
+
             street = ((it.get("location") or {}).get("address") or {}).get("street") or {}
             raw_rooms = str(it.get("roomsNumber") or "2").upper()
             rooms = ROOMS_MAP.get(raw_rooms, 2)
