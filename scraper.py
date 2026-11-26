@@ -1,4 +1,4 @@
-import json, re, time
+import json, os, re, time
 from datetime import datetime
 from curl_cffi import requests
 
@@ -15,8 +15,40 @@ ROOMS_MAP = {
     "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6
 }
 
+old_thumbs = {}
+if os.path.exists("listings.json"):
+    try:
+        with open("listings.json", "r", encoding="utf-8") as f:
+            for row in json.load(f):
+                if row.get("id") and row.get("thumbnail"):
+                    old_thumbs[str(row["id"])] = row["thumbnail"]
+    except Exception:
+        pass
+
+def fetch_og_image(offer_url):
+    try:
+        resp = requests.get(offer_url, impersonate="chrome", timeout=10)
+        if resp.status_code != 200:
+            return ""
+        m_og = re.search(
+            r'<meta[^>]+(?:property|name)=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
+            resp.text,
+            re.I,
+        ) or re.search(
+            r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:property|name)=["\']og:image["\']',
+            resp.text,
+            re.I,
+        )
+        if m_og:
+            return m_og.group(1).strip()
+    except Exception:
+        pass
+    return ""
+
 results = []
 seen = set()
+og_fetches = 0
+MAX_OG_FETCHES = 40
 
 for district, city, url in URLS:
     print(f"Fetching {district}...")
@@ -40,8 +72,11 @@ for district, city, url in URLS:
                 continue
             seen.add(slug)
 
-            imgs = it.get("images") or []
+            offer_id = str(it.get("id", slug))
+            offer_url = f"https://www.otodom.pl/pl/oferta/{slug}"
+
             thumb = ""
+            imgs = it.get("images") or []
             if imgs:
                 first = imgs[0]
                 if isinstance(first, str):
@@ -56,17 +91,25 @@ for district, city, url in URLS:
                         or next((v for v in first.values() if isinstance(v, str) and v.startswith("http")), "")
                     )
             if not thumb:
-                m_img = re.search(r'https://ireland\.apollo\.olxcdn\.com/v1/files/[^"\'\\]+', json.dumps(it))
+                m_img = re.search(
+                    r'https://[a-z0-9.-]*(?:olxcdn|otodom|static)[^"\'\\<\s]+(?:\.jpg|\.jpeg|\.webp|/image[^"\'\\<\s]*)',
+                    json.dumps(it),
+                    re.I,
+                )
                 if m_img:
                     thumb = m_img.group(0)
-                    if "/image" not in thumb:
-                        thumb += "/image;s=640x480"
+            if not thumb and offer_id in old_thumbs:
+                thumb = old_thumbs[offer_id]
+            if not thumb and og_fetches < MAX_OG_FETCHES:
+                og_fetches += 1
+                thumb = fetch_og_image(offer_url)
+                time.sleep(0.25)
 
             street = ((it.get("location") or {}).get("address") or {}).get("street") or {}
             raw_rooms = str(it.get("roomsNumber") or "2").upper()
             rooms = ROOMS_MAP.get(raw_rooms, 2)
             results.append({
-                "id": str(it.get("id", slug)),
+                "id": offer_id,
                 "district": district,
                 "city": city,
                 "street": street.get("name", ""),
@@ -77,14 +120,14 @@ for district, city, url in URLS:
                 "condition": "Do zamieszkania",
                 "firstListed": (it.get("dateCreatedFirst") or it.get("dateCreated") or datetime.utcnow().strftime("%Y-%m-%d"))[:10],
                 "title": it.get("title", "Mieszkanie"),
-                "otodomUrl": f"https://www.otodom.pl/pl/oferta/{slug}",
+                "otodomUrl": offer_url,
                 "olxUrl": "",
-                "thumbnail": thumb
+                "thumbnail": thumb,
             })
     except Exception as e:
         print(f"  Error on {district}: {e}")
     time.sleep(1)
 
-print(f"Total saved: {len(results)}")
+print(f"Total saved: {len(results)} (og:image fetched: {og_fetches})")
 with open("listings.json", "w", encoding="utf-8") as f:
     json.dump(results, f, ensure_ascii=False, indent=2)
