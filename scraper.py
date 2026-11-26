@@ -15,6 +15,8 @@ ROOMS_MAP = {
     "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6
 }
 
+DEBUG_ONE = True
+
 old_thumbs = {}
 if os.path.exists("listings.json"):
     try:
@@ -26,23 +28,31 @@ if os.path.exists("listings.json"):
         pass
 
 def fetch_og_image(offer_url):
+    global DEBUG_ONE
     try:
         resp = requests.get(offer_url, impersonate="chrome", timeout=10)
+        html = resp.text
+        if DEBUG_ONE:
+            DEBUG_ONE = False
+            print(
+                f"  [DEBUG] status={resp.status_code}, len={len(html)}, "
+                f"has_olxcdn={'apollo.olxcdn.com' in html}, has_og={'og:image' in html}",
+                flush=True,
+            )
         if resp.status_code != 200:
             return ""
-        m_og = re.search(
-            r'<meta[^>]+(?:property|name)=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
-            resp.text,
-            re.I,
-        ) or re.search(
-            r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:property|name)=["\']og:image["\']',
-            resp.text,
-            re.I,
-        )
-        if m_og:
-            return m_og.group(1).strip()
-    except Exception:
-        pass
+        for pat in [
+            r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
+            r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']',
+            r'<meta[^>]+name=["\']twitter:image["\'][^>]+content=["\']([^"\']+)["\']',
+            r'https://ireland\.apollo\.olxcdn\.com/v1/files/[^"\'\\<\s&]+',
+        ]:
+            m = re.search(pat, html, re.I)
+            if m:
+                url = m.group(1) if m.lastindex else m.group(0)
+                return url.replace("&amp;", "&").strip()
+    except Exception as e:
+        print(f"  [DEBUG] fetch_og_image err: {e}", flush=True)
     return ""
 
 results = []
@@ -51,17 +61,17 @@ og_fetches = 0
 MAX_OG_FETCHES = 40
 
 for district, city, url in URLS:
-    print(f"Fetching {district}...")
+    print(f"Fetching {district}...", flush=True)
     try:
         r = requests.get(url, impersonate="chrome", timeout=15)
-        print(f"  HTTP {r.status_code}")
+        print(f"  HTTP {r.status_code}", flush=True)
         m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', r.text, re.S)
         if not m:
-            print(f"  No __NEXT_DATA__ found for {district}")
+            print(f"  No __NEXT_DATA__ found for {district}", flush=True)
             continue
         data = json.loads(m.group(1))
         items = data.get("props", {}).get("pageProps", {}).get("data", {}).get("searchAds", {}).get("items", [])
-        print(f"  Found {len(items)} items in {district}")
+        print(f"  Found {len(items)} items in {district}", flush=True)
         for it in items:
             slug = it.get("slug")
             if not slug or slug in seen:
@@ -125,9 +135,9 @@ for district, city, url in URLS:
                 "thumbnail": thumb,
             })
     except Exception as e:
-        print(f"  Error on {district}: {e}")
+        print(f"  Error on {district}: {e}", flush=True)
     time.sleep(1)
 
-print(f"Total saved: {len(results)} (og:image fetched: {og_fetches})")
+print(f"Total saved: {len(results)} (og:image fetched: {og_fetches})", flush=True)
 with open("listings.json", "w", encoding="utf-8") as f:
     json.dump(results, f, ensure_ascii=False, indent=2)
