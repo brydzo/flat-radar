@@ -1344,22 +1344,6 @@
     "thumbnail": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6Im9jNml5YzNweDg1ZTItQVBMIiwidyI6W3siZm4iOiJlbnZmcXFlMWF5NGsxLUFQTCIsInMiOiIxNiIsImEiOiIwIiwicCI6IjEwLC0xMCJ9XX0.sjPXrIUnVekgIRbsJjZ-NII9xfuuytwvRBLFNcqNZ7A/image"
   },
   {
-    "id": "68573895",
-    "district": "Wełnowiec",
-    "city": "Katowice",
-    "street": "",
-    "price": 439000,
-    "area": 58.0,
-    "rooms": 4,
-    "adminFee": 0,
-    "condition": "Do zamieszkania",
-    "firstListed": "2026-10-28",
-    "title": "Mieszkanie do własnej aranżacji !",
-    "otodomUrl": "https://www.otodom.pl/pl/oferta/mieszkanie-do-wlasnej-aranzacji-ID4DJcz",
-    "olxUrl": "",
-    "thumbnail": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6ImF2a2hiYW9uZTdycTMtRUNPU1lTVEVNIiwidyI6W3siZm4iOiJlbnZmcXFlMWF5NGsxLUFQTCIsInMiOiIxNiIsImEiOiIwIiwicCI6IjEwLC0xMCJ9XX0.2bSpXtoqmimSt4qvk89nzVomJa3iOxYg3XnQzmbCXq8/image"
-  },
-  {
     "id": "68562020",
     "district": "Wełnowiec",
     "city": "Katowice",
@@ -1696,6 +1680,22 @@
     "thumbnail": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6Im5zcnB6aW84aGc4cjItRUNPU1lTVEVNIiwidyI6W3siZm4iOiJlbnZmcXFlMWF5NGsxLUFQTCIsInMiOiIxNiIsImEiOiIwIiwicCI6IjEwLC0xMCJ9XX0.-LtP1DQE4qQCEuHbbac3Jaekuup0IrR5NMI51EeI5jY/image"
   },
   {
+    "id": "66995136",
+    "district": "Wełnowiec",
+    "city": "Katowice",
+    "street": "ul. Jana Mikusińskiego",
+    "price": 472880,
+    "area": 41.12,
+    "rooms": 2,
+    "adminFee": 0,
+    "condition": "Do zamieszkania",
+    "firstListed": "2025-07-02",
+    "title": "2-pokojowe mieszkanie 41m2 + balkon",
+    "otodomUrl": "https://www.otodom.pl/pl/oferta/2-pokojowe-mieszkanie-41m2-balkon-ID4x6uI",
+    "olxUrl": "",
+    "thumbnail": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6InpvMmMxc2J2NW9mcTItRUNPU1lTVEVNIiwidyI6W3siZm4iOiJlbnZmcXFlMWF5NGsxLUFQTCIsInMiOiIxNiIsImEiOiIwIiwicCI6IjEwLC0xMCJ9XX0.qW8Mdtk7WwzR_raEE9WvRK3hZUZb9hYVE9JXG1x8M-Y/image"
+  },
+  {
     "id": "68666866",
     "district": "Os. Paderewskiego",
     "city": "Katowice",
@@ -2014,6 +2014,22 @@
     "otodomUrl": "https://www.otodom.pl/pl/oferta/swiezo-wyremontowane-mieszkanie-klimzowiec-ID4D9PO",
     "olxUrl": "",
     "thumbnail": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6IjYxZHNzMjMxYjFhajItRUNPU1lTVEVNIiwidyI6W3siZm4iOiJlbnZmcXFlMWF5NGsxLUFQTCIsInMiOiIxNiIsImEiOiIwIiwicCI6IjEwLC0xMCJ9XX0.rVPtcfayDKX3mvvrqpxw0X3N1e5o5p0R5MdAiOU4LXw/image"
+  },
+  {
+    "id": "68365748",
+    "district": "Klimzowiec",
+    "city": "Chorzów",
+    "street": "ul. Działkowa",
+    "price": 370000,
+    "area": 58.0,
+    "rooms": 2,
+    "adminFee": 0,
+    "condition": "Do zamieszkania",
+    "firstListed": "2026-08-31",
+    "title": "Mieszkanie po remoncie z dwoma oddzielnymi słonecznymi balkonami",
+    "otodomUrl": "https://www.otodom.pl/pl/oferta/mieszkanie-po-remoncie-z-dwoma-oddzielnymi-slonecznymi-balkonami-ID4CR3m",
+    "olxUrl": "",
+    "thumbnail": "https://ireland.apollo.olxcdn.com/v1/files/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbiI6InJkMGRnYmpibnR3NDItQVBMIiwidyI6W3siZm4iOiJlbnZmcXFlMWF5NGsxLUFQTCIsInMiOiIxNiIsImEiOiIwIiwicCI6IjEwLC0xMCJ9XX0.BCne12Xa2ZjJYpi6a2DGEW8lfyq-QbBoSrucTFqrQJc/image"
   },
   {
     "id": "68156364",
